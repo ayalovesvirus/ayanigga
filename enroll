@@ -1,0 +1,166 @@
+package newpackage;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashSet;
+import javax.swing.*;
+
+public class hashset extends JFrame implements ActionListener {
+
+    private HashSet<String> set;
+    private HashSet<String> loa;
+    private DefaultListModel<String> listmodel;
+    private JLabel label;
+    private JList<String> list;
+    private JTextField txtfield;
+    private JScrollPane scroll;
+    private JButton btnenroll, btnwithdraw, btnloa, btnview;
+
+    hashset() {
+
+        set = new HashSet<>();
+        loa = new HashSet<>();
+        listmodel = new DefaultListModel<>();
+
+        setTitle("Student Enrollment System");
+        setSize(500, 500);
+        setLayout(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        label = new JLabel(":Student ID");
+        label.setBounds(280, 55, 120, 25);
+        add(label);
+
+        txtfield = new JTextField();
+        txtfield.setBounds(20, 55, 230, 25);
+        add(txtfield);
+
+        list = new JList<>(listmodel);
+        scroll = new JScrollPane(list);
+        scroll.setBounds(20, 100, 230, 280);
+        add(scroll);
+
+        btnenroll = new JButton("Enroll");
+        btnenroll.setBounds(280, 100, 130, 30);
+        add(btnenroll);
+
+        btnwithdraw = new JButton("Withdraw");
+        btnwithdraw.setBounds(280, 150, 130, 30);
+        add(btnwithdraw);
+
+        btnloa = new JButton("Mark as LOA");
+        btnloa.setBounds(280, 200, 130, 30);
+        add(btnloa);
+
+        btnview = new JButton("View Enrolled");
+        btnview.setBounds(280, 250, 130, 30);
+        add(btnview);
+
+        btnenroll.addActionListener(this);
+        btnwithdraw.addActionListener(this);
+        btnloa.addActionListener(this);
+        btnview.addActionListener(this);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        if(e.getSource() == btnenroll) {
+
+            String listitem = txtfield.getText().trim();
+
+            if(!listitem.isEmpty()) {
+
+                if(set.add(listitem)) {
+
+                    
+
+                    JOptionPane.showMessageDialog(this,
+                            "Student enrolled: " + listitem);
+
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "Student already exists!");
+                }
+
+                txtfield.setText("");
+
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Please enter student name");
+            }
+
+        } else if(e.getSource() == btnwithdraw) {
+
+            String get = txtfield.getText().trim();
+
+            if(set.remove(get)) {
+
+                loa.remove(get);
+
+                JOptionPane.showMessageDialog(this,
+                        "Student withdrawn: " + get);
+               
+                txtfield.setText("");
+
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Student not found!");
+            }
+
+        } else if(e.getSource() == btnloa) {
+
+            String get = txtfield.getText().trim();
+
+            if(set.contains(get)) {
+
+                if(loa.add(get)) {
+
+                    JOptionPane.showMessageDialog(this,
+                            get + " is now marked as LOA!");
+
+                } else {
+
+                    JOptionPane.showMessageDialog(this,
+                            "Student is already LOA!");
+
+                }
+
+                txtfield.setText("");
+
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Student not found!");
+            }
+
+        } else if(e.getSource() == btnview) {
+
+            listmodel.clear();
+
+            if(!set.isEmpty()) {
+
+                for(String showset : set) {
+
+                    if(loa.contains(showset)) {
+
+                        listmodel.addElement(showset + " (LOA)");
+
+                    } else {
+
+                        listmodel.addElement(showset + " (ENROLLED)");
+
+                    }
+                    
+                }
+
+            } else {
+
+                JOptionPane.showMessageDialog(this,
+                        "No students enrolled");
+
+            }
+        }
+    }
+
+    
+}
