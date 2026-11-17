@@ -1,0 +1,160 @@
+package newpackage;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashSet;
+import javax.swing.*;
+
+public class hashset extends JFrame implements ActionListener {
+
+    private HashSet<String> set;
+    private HashSet<String> bought;
+    private DefaultListModel<String> listmodel;
+    private JLabel label,label2;
+    private JList<String> list;
+    private JTextField txtfield;
+    private JScrollPane scroll;
+    private JButton btnadd, btnremove, btnbought, btnview;
+
+    hashset() {
+
+        set = new HashSet<>();
+        bought = new HashSet<>();
+        listmodel = new DefaultListModel<>();
+
+        setTitle("Grocery Item List");
+        setSize(500, 500);
+        setLayout(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        label = new JLabel("Grocery Item");
+        label.setBounds(20, 50, 120, 25);
+        add(label);
+        
+        label2 = new JLabel("Grocery list");
+        label2.setBounds(170, 80, 120, 25);
+        add(label2);
+        
+        txtfield = new JTextField();
+        txtfield.setBounds(170, 55, 230, 25);
+        add(txtfield);
+
+        list = new JList<>(listmodel);
+        scroll = new JScrollPane(list);
+        scroll.setBounds(170, 100, 230, 280);
+        add(scroll);
+
+        btnadd = new JButton("Add Item");
+        btnadd.setBounds(20, 100, 130, 30);
+        add(btnadd);
+
+        btnremove = new JButton("Remove Item");
+        btnremove.setBounds(20, 150, 130, 30);
+        add(btnremove);
+
+        btnbought = new JButton("Mark as Bought");
+        btnbought.setBounds(20, 200, 130, 30);
+        add(btnbought);
+
+        btnview = new JButton("View List");
+        btnview.setBounds(20, 250, 130, 30);
+        add(btnview);
+
+        btnadd.addActionListener(this);
+        btnremove.addActionListener(this);
+        btnbought.addActionListener(this);
+        btnview.addActionListener(this);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        if(e.getSource() == btnadd) {
+
+            String item = txtfield.getText().trim();
+
+            if(!item.isEmpty()) {
+
+                if(set.add(item)) {
+
+                    JOptionPane.showMessageDialog(this,
+                            "Item added: " + item);
+
+                    listmodel.addElement(item);
+
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "Item already exists!");
+                }
+
+                txtfield.setText("");
+
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Please enter an item");
+            }
+
+        } else if(e.getSource() == btnremove) {
+
+            String get = txtfield.getText().trim();
+
+            if(set.remove(get)) {
+
+                bought.remove(get);
+
+                JOptionPane.showMessageDialog(this,
+                        "Item removed: " + get);
+
+                listmodel.removeElement(get);
+
+                // Remove the displayed bought label if present
+                listmodel.removeElement(get + " (Bought)");
+
+                txtfield.setText("");
+
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Item not found!");
+            }
+
+        } else if(e.getSource() == btnbought) {
+
+            String get = txtfield.getText().trim();
+
+            if(set.contains(get)) {
+
+                bought.add(get);
+
+                JOptionPane.showMessageDialog(this,
+                        get + " marked as bought!");
+
+                txtfield.setText("");
+
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Item not found in grocery list!");
+            }
+
+        } else if(e.getSource() == btnview) {
+
+            listmodel.clear();
+
+            if(!set.isEmpty()) {
+
+                for(String showset : set) {
+
+                    if(bought.contains(showset)) {
+                        listmodel.addElement(showset + " (Bought)");
+                    } else {
+                        listmodel.addElement(showset);
+                    }
+                }
+
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Grocery list is empty!");
+            }
+        }
+    }
+
+    }
